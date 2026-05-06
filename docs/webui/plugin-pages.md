@@ -18,7 +18,7 @@ astrbot_plugin_page_demo/
 
 AstrBot 会扫描 `pages/<page_name>/index.html`；没有 `index.html` 的目录会被忽略。
 
-如果只是让用户填写几个配置项，优先使用 [`_conf_schema.json`](./plugin-config.md)。插件 Pages 更适合复杂表单、Dashboard、日志、文件上传下载、SSE 和自定义交互流程。
+如果只是让用户填写几个配置项，优先使用 [`_conf_schema.json`](../plugin_config/schema.md)。插件 Pages 更适合复杂表单、Dashboard、日志、文件上传下载、SSE 和自定义交互流程。
 
 ## 最小前端示例
 
@@ -127,5 +127,4 @@ AstrBot 会重写：
 建议把静态资源写成 `./style.css`、`./assets/logo.svg` 这类相对路径。不要手动追加 `asset_token`，也不要依赖 `..` 逃逸 Page 根目录。
 
 如果你构建 SPA，建议使用 hash routing。静态资源服务按真实文件路径解析；history routing 刷新页面时需要对应路径上真的存在文件。
-
 

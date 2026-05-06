@@ -5,7 +5,7 @@ category: agent
 # Subagents（子智能体 / Handoff）
 
 Subagent 是给主 Agent 使用的 handoff 工具。主模型通过 `transfer_to_<name>` 把任务转交给子智能体执行。
-`from astrbot.api import agent`（详见 `docs/agent/agent-registration.md`）
+`from astrbot.api import agent`（代码式注册属于高级用法；配置式子智能体优先使用下方配置结构。）
 
 ## 配置式（推荐）
 
@@ -59,12 +59,10 @@ async def writer_agent(event):
     return None
 ```
 
-> 代码式注册、`run_hooks`、专属工具挂载见：`docs/agent/agent-registration.md`
+> 代码式注册、`run_hooks`、专属工具挂载见：`agent/agent-related-hooks.md`
 
 ## MUST
 
 - `name` 必须非空，且在同一实例中保持唯一。
 - `public_description` 必须写“适用任务”，不要写空泛人设。
 - `tools` 必须显式写成字符串列表（不要依赖隐式行为）。
-
-

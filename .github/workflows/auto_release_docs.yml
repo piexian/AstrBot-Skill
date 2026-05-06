@@ -37,11 +37,10 @@ jobs:
           echo "Decision:"
           cat "$GITHUB_OUTPUT"
 
-      - name: Create docs zip
+      - name: Create installable skill zip
         if: steps.check.outputs.should_release == 'true'
         run: |
-          test -d docs
-          zip -r "${{ steps.check.outputs.asset_name }}" docs
+          python scripts/package_skill.py --output "${{ steps.check.outputs.asset_name }}"
 
       - name: Publish GitHub Release
         if: steps.check.outputs.should_release == 'true'

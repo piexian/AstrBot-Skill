@@ -1,0 +1,62 @@
+name: Tag Build
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tag-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Install Node dependencies
+        run: npm install --no-fund --no-audit --no-package-lock
+
+      - name: Verify Skills CLI discovery
+        run: |
+          npx -y skills@1.5.5 add . --list
+
+      - name: Run Python tests
+        run: python -m unittest discover -s tests
+
+      - name: Build AstrBot skill package
+        run: |
+          mkdir -p dist
+          python scripts/package_skill.py --output "dist/skill-astrbot-dev-${GITHUB_REF_NAME}.zip"
+
+      - name: Build docs
+        run: npm run docs:build
+
+      - name: Upload skill package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: skill-astrbot-dev-${{ github.ref_name }}
+          path: dist/skill-astrbot-dev-${{ github.ref_name }}.zip
+          if-no-files-found: error
+
+      - name: Upload docs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: astrbot-skill-docs-${{ github.ref_name }}
+          path: .vitepress/dist
+          if-no-files-found: error

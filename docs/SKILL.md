@@ -7,7 +7,9 @@ metadata:
 
 # skill-astrbot-dev
 
-This skill is the source-of-truth index for AstrBot developer docs in this repo (`docs/`).
+This skill is the source-of-truth index for AstrBot developer docs. After installation,
+the `docs/` directory becomes the Skill root. Paths below are relative to this `SKILL.md`;
+when reading from the repository root, prefix them with `docs/`.
 
 Goal: when this skill is selected, immediately ground on the minimum required docs + code entrypoints,
 avoid duplicated reading, and always prefer code as the final authority.
@@ -24,16 +26,16 @@ Use this skill when you ask for help with:
 ## Mandatory workflow (use this every time)
 
 1. Start from a single entrypoint (avoid broad loading):
-   - Site index: `docs/index.md`
-   - Core concepts: `docs/design_standards/core_concepts.md`
+   - Site index: `index.md`
+   - Core concepts: `design_standards/core_concepts.md`
 2. Pick one topic folder and stay focused:
-   - Agent system: `docs/agent/`
-   - Plugin config: `docs/plugin_config/`
-   - Messages: `docs/messages/`
-   - Platform adapters: `docs/platform_adapters/`
-3. For Agent Runner (v4.7.0+): `docs/agent/agent-runner.md`
+   - Agent system: `agent/`
+   - Plugin config: `plugin_config/`
+   - Messages: `messages/`
+   - Platform adapters: `platform_adapters/`
+3. For Agent Runner (v4.7.0+): `agent/agent-runner.md`
 4. If the user targets a specific AstrBot version, cross-check:
-   - `docs/snapshots/<version>/`
+   - `snapshots/<version>/`
 5. If docs and code disagree, treat code as truth:
    - Core code lives under `astrbotcore/astrbot/core/` (read only the needed files)
 
@@ -92,8 +94,8 @@ For large resources like high-resolution images, it is best to use a CDN instead
 
 There are two different "hook" layers you must not mix up:
 
-- Plugin event hooks (decorators): `docs/plugin_config/hooks.md`
-- Agent runner hooks (`BaseAgentRunHooks`): `docs/agent/agent-related-hooks.md`
+- Plugin event hooks (decorators): `plugin_config/hooks.md`
+- Agent runner hooks (`BaseAgentRunHooks`): `agent/agent-related-hooks.md`
 
 If you need a complete hook inventory (because context may be truncated), generate it locally:
 
@@ -101,7 +103,7 @@ If you need a complete hook inventory (because context may be truncated), genera
 python scripts/generate_hook_inventory.py
 ```
 
-This writes to `docs/.tmp/hook_inventory/` (gitignored). Use it as a scratchpad for writing/updating docs;
+This writes to `docs/.tmp/hook_inventory/` (gitignored) when run from the repository root. Use it as a scratchpad for writing/updating docs;
 do not reference `.tmp` paths as public documentation URLs.
 
 ## High-signal code entrypoints (open only when needed)
@@ -116,7 +118,7 @@ do not reference `.tmp` paths as public documentation URLs.
 
 ## v4.5.7+ New Tool Definition Pattern
 
-推荐使用 dataclass 模式定义 Tool（见 `docs/design_standards/core_concepts.md` 第7节）：
+推荐使用 dataclass 模式定义 Tool（见 `design_standards/core_concepts.md` 第7节）：
 
 ```python
 from pydantic.dataclasses import dataclass
@@ -135,4 +137,3 @@ class MyTool(FunctionTool):
 注册：`self.context.add_llm_tools(MyTool())`
 
 装饰器方式仍然支持，但推荐新项目使用 dataclass 模式。
-

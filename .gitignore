@@ -4,5 +4,6 @@ venv/
 node_modules/
 .vitepress/cache
 *dist
+dist/
 docs/.tmp/
 astrbotcore/

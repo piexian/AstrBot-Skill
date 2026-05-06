@@ -2,7 +2,12 @@
   "scripts": {
     "docs:dev": "vitepress dev --host",
     "docs:build": "vitepress build",
-    "docs:preview": "vitepress preview"
+    "docs:preview": "vitepress preview",
+    "skill:pack": "python scripts/package_skill.py",
+    "skill:install": "npx skills add . -g -y",
+    "skill:install:codex": "npx skills add . -g -a codex -y",
+    "skill:install:claude": "npx skills add . -g -a claude-code -y",
+    "skill:install:gemini": "npx skills add . -g -a gemini-cli -y"
   },
   "devDependencies": {
     "vitepress": "^1.6.4"

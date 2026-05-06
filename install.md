@@ -1,19 +1,57 @@
-# 安装 `astrbot-dev-skill`
+# 安装 `skill-astrbot-dev`
 
-`D:\程序\AstrBot-docs\docs` 这个目录本身就是 `astrbot-dev-skill` 的完整内容，不是只拷一个 `SKILL.md`。
+## 方式一：CLI 自动安装（推荐）
 
-安装时要把整个 `docs` 目录作为一个 Skill 一起提供给 AI，这样 AI 在读取 `SKILL.md` 后，才能继续访问它引用的其他文档，例如：
+使用官方开放 Skills CLI 安装到已支持的本地 Agent：
 
-- `index.md`
-- `design_standards/`
-- `agent/`
-- `plugin_config/`
-- `messages/`
-- `platform_adapters/`
+```bash
+npx skills add EterUltimate/AstrBot-Skill -g -y
+```
 
-## 正确目录结构
+`npx` 依赖 Node.js/npm。安装前请先确认：
 
-推荐把 `docs` 目录重命名为 `skill-astrbot-dev` 后再安装：
+```bash
+node --version
+npm --version
+npx --version
+```
+
+如果环境没有 Node.js/npm/npx，需要先安装 Node.js 18+；不能使用 npm 的环境请改用 AstrBot 面板 zip 或手工安装兜底。
+
+安装到指定 CLI：
+
+```bash
+npx skills add EterUltimate/AstrBot-Skill -g -a codex -y
+npx skills add EterUltimate/AstrBot-Skill -g -a claude-code -y
+npx skills add EterUltimate/AstrBot-Skill -g -a gemini-cli -y
+```
+
+常用参数：
+
+- `-g, --global`: 安装到用户全局 skills 目录。
+- `-a, --agent`: 指定目标 CLI，例如 `codex`、`claude-code`、`gemini-cli`。
+- `--list`: 只列出仓库内可安装的 Skill，不安装。
+- `-y, --yes`: 跳过确认提示。
+
+本仓库的可安装 Skill 位于 `docs/`，CLI 会自动发现 `docs/SKILL.md` 并只安装这份文档目录，避免把仓库脚本、CI 配置或构建产物复制进客户端 skills 目录。
+
+Tag push（`v*`）会触发 `Tag Build`，自动构建可下载产物。
+
+## 方式二：AstrBot 管理面板上传
+
+AstrBot 面板上传仍推荐使用 release 附件里的 `skill-astrbot-dev-<version>.zip`。这个压缩包已经把
+`docs/` 内容整理成标准 Skill 目录，解压后的顶层目录就是 `skill-astrbot-dev/`，
+不需要再手动复制、重命名或重新压缩。
+
+1. 打开本仓库 Releases。
+2. 下载 `skill-astrbot-dev-<version>.zip`。
+3. 进入 AstrBot 管理面板 `插件 -> Skills`。
+4. 直接上传这个 zip。
+
+如果 release 附件还没发布，可以打开 GitHub Actions 里的 `Tag Build`，下载
+`skill-astrbot-dev-<tag>` artifact，其中包含同样可上传的 zip。
+
+上传包结构应为：
 
 ```text
 skill-astrbot-dev/
@@ -27,83 +65,51 @@ skill-astrbot-dev/
 └── ...
 ```
 
-核心要求：
+## 方式三：从本地仓库安装到 CLI
 
-- `SKILL.md` 必须位于 Skill 根目录
-- `SKILL.md` 引用到的其余文档必须保留原有相对路径
-- 不要只复制 `SKILL.md`，否则 AI 无法继续读取剩余文档
+在仓库根目录运行：
 
-## 方式一：安装到 AstrBot
-
-适用于 AstrBot 管理面板上传 Skill。
-
-1. 复制整个 `docs` 目录
-2. 将复制出的目录重命名为 `skill-astrbot-dev`
-3. 确认目录内保留完整文档结构
-4. 将 `skill-astrbot-dev` 压缩为 `.zip`
-5. 进入 AstrBot 管理面板 `插件 -> Skills`
-6. 上传该压缩包
-
-压缩包要求：
-
-- 解压后顶层目录为 `skill-astrbot-dev/`
-- `skill-astrbot-dev/` 下直接包含 `SKILL.md`
-- 其他子目录和文档必须一并存在
-
-## 方式二：安装到本地 Agent / Codex
-
-适用于本地 Agent 直接从 skills 目录加载。
-
-1. 找到本地 skills 根目录
-2. 将整个 `docs` 目录复制进去
-3. 将该目录命名为 `skill-astrbot-dev`
-
-示例：
-
-```text
-<skills-root>/
-└── skill-astrbot-dev/
-    ├── SKILL.md
-    ├── index.md
-    ├── agent/
-    ├── design_standards/
-    ├── messages/
-    ├── platform_adapters/
-    ├── plugin_config/
-    └── ...
+```bash
+npx skills add . -g -y
 ```
 
-如果当前使用的是 Codex，本机示例路径通常类似：
+指定 Codex：
 
-```text
-C:\Users\<用户名>\.codex\skills\skill-astrbot-dev\
+```bash
+npx skills add . -g -a codex -y
 ```
 
-## 给 AI 的使用说明
+## 方式四：本地打包后安装 AstrBot
 
-安装后，AI 不应只读取 `SKILL.md`，还应按 `SKILL.md` 中的相对路径继续读取相关文档。
+需要自己生成上传包时，在仓库根目录运行：
 
-可以直接这样提示 AI：
-
-```text
-请使用 skill-astrbot-dev。先读取 SKILL.md，再按其中引用继续读取相关文档，不要只看一个文件。
+```bash
+python scripts/package_skill.py
 ```
 
-或者：
+生成文件：
 
 ```text
-请加载 skill-astrbot-dev，并在分析插件开发问题时继续读取该 skill 目录下被引用的文档。
+dist/skill-astrbot-dev.zip
+```
+
+这个 zip 可以直接上传到 AstrBot。
+
+## 手工安装兜底
+
+如果不能使用 `npx skills add` 或 AstrBot release 包，手工复制时只需要遵守一个规则：把仓库的 `docs/` 目录作为完整
+Skill 根目录使用，并命名为 `skill-astrbot-dev`。不要只复制 `SKILL.md`。
+
+## 使用提示
+
+安装后可以这样提示 AI：
+
+```text
+请使用 skill-astrbot-dev。先读取 SKILL.md，再按其中引用继续读取相关文档。
 ```
 
 ## 验证
 
-安装完成后，应满足：
-
-- Skill 列表中能看到 `skill-astrbot-dev`
-- AI 能读取 `SKILL.md`
-- AI 能继续访问 `index.md`、`agent/`、`plugin_config/` 等子文档
-
-## 说明
-
-- 此 Skill 的真实安装单位是整个 `docs` 目录
-- `SKILL.md` 只是入口文件，不是完整内容
+- Skill 列表中能看到 `skill-astrbot-dev`。
+- AI 能读取 `SKILL.md`。
+- AI 能继续访问 `index.md`、`agent/`、`plugin_config/` 等同级文档目录。

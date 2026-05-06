@@ -91,8 +91,12 @@ def main() -> int:
             reason = f"upstream {upstream_tag} not newer than {current_tag}"
 
     release_title = f"更新到 AstrBot {upstream_tag} 版本的文档"
-    release_body = f"更新到 AstrBot {upstream_tag} 版本的文档。附件仅包含仓库 docs/ 目录内容的压缩包。"
-    asset_name = f"docs-{upstream_tag}.zip"
+    release_body = (
+        f"更新到 AstrBot {upstream_tag} 版本的文档。\n\n"
+        "附件是可直接上传到 AstrBot Skills 或解压到本地 Agent skills 目录的安装包，"
+        "解压后顶层目录为 `skill-astrbot-dev/`。"
+    )
+    asset_name = f"skill-astrbot-dev-{upstream_tag}.zip"
 
     _write_github_output(
         {
