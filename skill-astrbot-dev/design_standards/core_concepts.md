@@ -48,7 +48,7 @@ prov_id = await self.context.get_current_chat_provider_id(umo)
 
 - `await context.get_current_chat_provider_id(umo) -> str`: 获取当前会话使用的 chat provider ID。
 - `await context.llm_generate(chat_provider_id, prompt, contexts=None, system_prompt=None, tools=None) -> LLMResponse`: 简化的 LLM 调用。
-- `await context.tool_loop_agent(event, chat_provider_id, prompt, tools, system_prompt=None, max_steps=30, tool_call_timeout=60) -> LLMResponse`: 工具循环 Agent。
+- `await context.tool_loop_agent(event, chat_provider_id, prompt, tools, system_prompt=None, max_steps=30, tool_call_timeout=120) -> LLMResponse`: 工具循环 Agent。
 
 **MessageChain (消息链构建器)**
 
@@ -61,7 +61,7 @@ prov_id = await self.context.get_current_chat_provider_id(umo)
 - `await self.get_kv_data(key, default)`: 获取插件隔离的 KV 数据。
 - `await self.put_kv_data(key, value)`: 存储插件隔离的 KV 数据。
 - `await self.delete_kv_data(key)`: 删除 KV 数据。
-- `await self.html_render(html_text=None, url=None, data=None, options=None)`: 将 HTML 字符串或网页渲染为图片。基于 Playwright。
+- `await self.html_render(tmpl: str, data: dict, return_url=True, options=None) -> str`: 渲染 Jinja2 HTML 模板为图片路径或 URL。基于 Playwright。
 - `text_to_image(text)`: 将文字转为图片。
 
 ### 5. 系统钩子 (Hooks)
