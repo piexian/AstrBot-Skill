@@ -8,13 +8,15 @@ AstrBot 通过 Schema 实现配置的自动解析与 WebUI 可视化。在插件
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
-| `type` | **必填** | `string`, `text`, `int`, `float`, `bool`, `object`, `list`, `dict`, `template_list`, `file` |
+| `type` | **必填** | `string`, `text`, `int`, `float`, `bool`, `object`, `list`, `template_list`, `file` |
 | `description` | string | 配置描述 |
 | `hint` | string | 悬浮提示 |
 | `obvious_hint` | bool | 是否显眼显示 hint |
 | `default` | 任意 | 默认值 |
 | `options` | list | 下拉选项列表 |
 | `invisible` | bool | 是否隐藏（默认 false） |
+
+> **注意**：`type` 值必须使用上表中的确切名称（如 `string`），不能写 `str` 或其他别名，否则核心会抛出 `TypeError`。
 
 ---
 
@@ -23,15 +25,15 @@ AstrBot 通过 Schema 实现配置的自动解析与 WebUI 可视化。在插件
 ### text
 多行文本输入，可拖拽调整高度。
 
-### dict
-键值对编辑，支持 `template_schema` 定义子项：
+### object
+嵌套对象，使用 `items` 定义固定子项结构：
 
 ```json
 {
   "custom_params": {
-    "type": "dict",
+    "type": "object",
     "description": "自定义参数",
-    "template_schema": {
+    "items": {
       "temperature": {
         "type": "float",
         "default": 0.6,
@@ -41,6 +43,10 @@ AstrBot 通过 Schema 实现配置的自动解析与 WebUI 可视化。在插件
   }
 }
 ```
+
+### dict（核心配置专用）
+
+> ⚠️ **注意**：`dict` 类型仅用于 AstrBot 核心配置，**插件 `_conf_schema.json` 不支持此类型**。插件如需键值对配置，请使用 `object` 类型。
 
 ### template_list
 多组重复配置（v4.10.4+）：
@@ -132,6 +138,7 @@ AstrBot 通过 Schema 实现配置的自动解析与 WebUI 可视化。在插件
 
 ```python
 from astrbot.api import AstrBotConfig
+from astrbot.api.star import Context, Star
 
 class MyPlugin(Star):
     def __init__(self, context: Context, config: AstrBotConfig):

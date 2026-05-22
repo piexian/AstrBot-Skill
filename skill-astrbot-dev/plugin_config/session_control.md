@@ -7,7 +7,7 @@ AstrBot 提供开箱即用的会话控制功能，适用于多轮对话场景（
 ## 快速入口
 
 ```python
-from astrbot.core.utils.session_waiter import session_waiter, SessionController
+from astrbot.api.util import session_waiter, SessionController
 ```
 
 ---
@@ -85,7 +85,7 @@ history = controller.get_history_chains()  # List[List[Comp.BaseMessageComponent
 默认基于 `sender_id` 识别不同会话。通过继承 `SessionFilter` 可自定义隔离范围（如按群组拦截）：
 
 ```python
-from astrbot.core.utils.session_waiter import SessionFilter
+from astrbot.api.util import SessionFilter
 
 class GroupFilter(SessionFilter):
     def filter(self, event: AstrMessageEvent) -> str:

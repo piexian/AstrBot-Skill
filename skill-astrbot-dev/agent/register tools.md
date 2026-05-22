@@ -17,9 +17,10 @@ Tool 是让大语言模型调用外部能力（检索、计算、执行命令、
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
-from astrbot.core.agent.run_context import ContextWrapper
-from astrbot.core.agent.tool import FunctionTool, ToolExecResult
-from astrbot.core.astr_agent_context import AstrAgentContext
+from astrbot.core.agent.run_context import ContextWrapper  # 内部实现，暂不提供公开 API
+from astrbot.api import FunctionTool
+from astrbot.core.agent.tool import ToolExecResult  # 内部实现，暂不提供公开 API
+from astrbot.core.astr_agent_context import AstrAgentContext  # 内部实现，暂不提供公开 API
 
 
 @dataclass
@@ -50,7 +51,7 @@ class BilibiliTool(FunctionTool[AstrAgentContext]):
 **ToolExecResult 返回值格式（v4.22.2）：**
 
 `python
-from astrbot.core.agent.tool import ToolExecResult
+from astrbot.core.agent.tool import ToolExecResult  # 内部实现，暂不提供公开 API
 
 return ToolExecResult(result="文本结果")
 return ToolExecResult(is_error=True, result="错误信息")
@@ -94,7 +95,7 @@ umber、object、oolean、rray、rray[string]（v4.5.7+）。
 仅在单次 	ool_loop_agent 调用中可见，不进入全局工具池：
 
 `python
-from astrbot.core.agent.tool import ToolSet
+from astrbot.api import ToolSet
 
 llm_resp = await self.context.tool_loop_agent(
     event=event,

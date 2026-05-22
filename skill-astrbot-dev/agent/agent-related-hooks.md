@@ -15,8 +15,8 @@ category: agent
 ```python
 from astrbot.api.event import filter, AstrMessageEvent
 from astrbot.api.provider import LLMResponse
-from astrbot.core.agent.run_context import ContextWrapper
-from astrbot.core.astr_agent_context import AstrAgentContext
+from astrbot.core.agent.run_context import ContextWrapper  # 内部实现，暂不提供公开 API
+from astrbot.core.astr_agent_context import AstrAgentContext  # 内部实现，暂不提供公开 API
 
 @filter.on_agent_begin()
 async def on_begin(
@@ -65,7 +65,7 @@ async def on_resp(self, event: AstrMessageEvent, response: LLMResponse) -> None:
 
 ```python
 from astrbot.api.event import filter, AstrMessageEvent
-from astrbot.core.agent.tool import FunctionTool
+from astrbot.api import FunctionTool
 from mcp.types import CallToolResult
 
 @filter.on_using_llm_tool()
@@ -95,10 +95,10 @@ async def after_sent(self, event: AstrMessageEvent) -> None: ...
 用于 `context.tool_loop_agent(..., agent_hooks=...)` 的运行期扩展。
 
 ```python
-from astrbot.core.agent.hooks import BaseAgentRunHooks
-from astrbot.core.agent.run_context import ContextWrapper
-from astrbot.core.agent.tool import FunctionTool
-from astrbot.core.provider.entities import LLMResponse
+from astrbot.core.agent.hooks import BaseAgentRunHooks  # 内部实现，暂不提供公开 API
+from astrbot.core.agent.run_context import ContextWrapper  # 内部实现，暂不提供公开 API
+from astrbot.api import FunctionTool
+from astrbot.api.provider import LLMResponse
 import mcp
 
 class MyAgentHooks(BaseAgentRunHooks):

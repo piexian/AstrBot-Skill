@@ -134,7 +134,7 @@ do not reference `.tmp` paths as public documentation URLs.
 
 ```python
 from pydantic.dataclasses import dataclass
-from astrbot.core.agent.tool import FunctionTool
+from astrbot.api import FunctionTool
 
 @dataclass
 class MyTool(FunctionTool):
