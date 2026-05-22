@@ -33,7 +33,7 @@ await pm.create_persona(
 
 ### 3. 更新
 * **`update_persona(persona_id, system_prompt=None, begin_dialogs=None, tools=None, skills=None) -> Persona`**
-  * 注意：无 `folder_id` 与 `sort_order` 参数。若仅改 prompt，需先读旧值回填 tools/skills，避免被重置为默认。
+  * 注意：无 `folder_id` 与 `sort_order` 参数。不传 `tools`/`skills` 时这两个字段不会被修改（`NOT_GIVEN` 哨兵）。
   * 异常：ID 不存在抛 `ValueError`
 
 ```python

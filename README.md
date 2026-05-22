@@ -6,8 +6,8 @@
 
 _✨ 结构化技术文档 + AGENT SKILL 定义，赋能 AI 辅助开发 ✨_
 
-[![GitHub Stars](https://img.shields.io/github/stars/EterUltimate/AstrBot-Skill?style=for-the-badge&logo=github&color=yellow)](https://github.com/EterUltimate/AstrBot-Skill)
-[![GitHub Forks](https://img.shields.io/github/forks/EterUltimate/AstrBot-Skill?style=for-the-badge&logo=github&color=blue)](https://github.com/EterUltimate/AstrBot-Skill/fork)
+[![GitHub Stars](https://img.shields.io/github/stars/EterUltimate/AstrBot-Skill?style=for-the-badge&logo=github&color=yellow)](https://github.com/xunxiing/AstrBot-Skill)
+[![GitHub Forks](https://img.shields.io/github/forks/EterUltimate/AstrBot-Skill?style=for-the-badge&logo=github&color=blue)](https://github.com/xunxiing/AstrBot-Skill/fork)
 [![QQ群](https://img.shields.io/badge/QQ群-1054962131-pink?style=for-the-badge&logo=tencent-qq&logoColor=white)](https://qm.qq.com/q/AstrBot)
 
 </div>

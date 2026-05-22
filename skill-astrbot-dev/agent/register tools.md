@@ -1,4 +1,4 @@
-﻿---
+---
 category: agent
 ---
 
@@ -13,7 +13,7 @@ Tool 是让大语言模型调用外部能力（检索、计算、执行命令、
 
 ## 方式一：类定义 Tool（推荐，v4.5.7+）
 
-`python
+```python
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
@@ -46,32 +46,32 @@ class BilibiliTool(FunctionTool[AstrAgentContext]):
         **kwargs,
     ) -> ToolExecResult:
         return ToolExecResult(result="搜索结果...")
-`
+```
 
 **ToolExecResult 返回值格式（v4.22.2）：**
 
-`python
+```python
 from astrbot.core.agent.tool import ToolExecResult  # 内部实现，暂不提供公开 API
 
 return ToolExecResult(result="文本结果")
 return ToolExecResult(is_error=True, result="错误信息")
 return ToolExecResult(result="", image_url="https://...")  # 图片结果
-`
+```
 
 ## 注册到全局工具池
 
-`python
+```python
 class MyPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
         self.context.add_llm_tools(BilibiliTool())
-`
+```
 
 注册后主对话模型自动感知并调用该 Tool。
 
 ## 方式二：装饰器（兼容旧版）
 
-`python
+```python
 from astrbot.api.event import filter, AstrMessageEvent
 
 @filter.llm_tool(name="get_weather")
@@ -83,18 +83,18 @@ async def get_weather(self, event: AstrMessageEvent, location: str):
     """
     resp = self.get_weather_from_api(location)
     yield event.plain_result("天气信息: " + resp)
-`
+```
 
 Docstring 中 Args 格式必须是 参数名(类型): 描述。
 
-支持的类型：string、
-umber、object、oolean、rray、rray[string]（v4.5.7+）。
+支持的类型：string、number、object、array、boolean。
+数组元素类型写法：array[string]（v4.5.7+）。
 
 ## 内部 Tool（不注册全局）
 
-仅在单次 	ool_loop_agent 调用中可见，不进入全局工具池：
+仅在单次 tool_loop_agent 调用中可见，不进入全局工具池：
 
-`python
+```python
 from astrbot.api import ToolSet
 
 llm_resp = await self.context.tool_loop_agent(
@@ -103,7 +103,7 @@ llm_resp = await self.context.tool_loop_agent(
     prompt="请调用 bilibili_videos 工具搜索 AstrBot 教程",
     tools=ToolSet([BilibiliTool()]),
 )
-`
+```
 
 ## Tips
 
