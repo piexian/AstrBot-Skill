@@ -33,7 +33,8 @@ Use this skill when you ask for help with:
 - AstrBot plugin structure, decorators/hooks, lifecycle, schema, sessions
 - Message model/event flow and message-chain conversion
 - Platform adapter interface and message conversion patterns
-- Agent topics (tools/providers/personas/subagents/sandbox/cron/context compression)
+  - Agent topics (tools/providers/personas/subagents/sandbox/cron/context compression)
+  - Context management (conversation branches, history operations, context injection, compression strategies)
 
 ## Mandatory workflow (use this every time)
 
