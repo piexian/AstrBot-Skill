@@ -19,7 +19,6 @@ metadata:
   compatibility: astrbot >=4.16
   license: MIT
 ---
-
 # skill-astrbot-dev
 
 This skill provides the authoritative reference for AstrBot plugin and core development.
@@ -47,9 +46,10 @@ Use this skill when you ask for help with:
    - Messages: `skill-astrbot-dev/messages/`
    - Platform adapters: `skill-astrbot-dev/platform_adapters/`
 3. For Agent Runner (v4.7.0+): `skill-astrbot-dev/agent/agent-runner.md`
-4. If the user targets a specific AstrBot version, cross-check:
+4. For context management (conversation, history, compression): `skill-astrbot-dev/agent/context-management.md`
+5. If the user targets a specific AstrBot version, cross-check:
    - `skill-astrbot-dev/snapshots/<version>/`
-5. If docs and code disagree, treat code as truth:
+6. If docs and code disagree, treat code as truth:
    - Core code lives under `astrbotcore/astrbot/core/` (read only the needed files)
 
 ## STRONGLY ADVISED: use AstrBot SDK while writing plugins
@@ -97,10 +97,11 @@ astrbot_version: ">=4.16,<5" #声明插件要求的 AstrBot 版本范围。
 - Prefer small, testable functions over large monolithic handler bodies.
 - Keep README and metadata consistent with actual plugin behavior and version.
   -If you are writing AstrBot core code instead of plugins, you must submit a PR to https://github.com/AstrBotDevs/AstrBot-docs if the changes require doc updates (for instance: new hooks, new APIs, new features, platform adapter changes, and so on). If you don't see the docs repo, please remind the user to clone the docs-repo and add it to the workspace.
-Ensure that a `requirements.txt` file is created in the plugin directory and populated with the necessary dependencies.
-It's best to keep the plugin size under 32MB.
-For large resources like high-resolution images, it is best to use a CDN instead of hardcoring.
-It's better to use new hooks instead of old ones.
+  Ensure that a `requirements.txt` file is created in the plugin directory and populated with the necessary dependencies.
+  It's best to keep the plugin size under 32MB.
+  For large resources like high-resolution images, it is best to use a CDN instead of hardcoring.
+  It's better to use new hooks instead of old ones.
+
 ### 
 
 ## Hooks: avoid missing / outdated references
@@ -150,3 +151,5 @@ class MyTool(FunctionTool):
 注册：`self.context.add_llm_tools(MyTool())`
 
 装饰器方式仍然支持，但推荐新项目使用 dataclass 模式。
+
+AstrBot supports project debugging using OpenAPI. Please ask the user for their API key and the URL/address of their AstrBot instance. Additionally, retrieve the full OpenAPI documentation at `[https://docs.astrbot.app/scalar.html](https://docs.astrbot.app/scalar.html)`. Further requirements regarding autonomous debugging can be found in `Guidelines_Testing.md`
