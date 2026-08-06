@@ -153,3 +153,11 @@ class MyTool(FunctionTool):
 装饰器方式仍然支持，但推荐新项目使用 dataclass 模式。
 
 AstrBot supports project debugging using OpenAPI. Please ask the user for their API key and the URL/address of their AstrBot instance. Additionally, retrieve the full OpenAPI documentation at `[https://docs.astrbot.app/scalar.html](https://docs.astrbot.app/scalar.html)`. Further requirements regarding autonomous debugging can be found in `Guidelines_Testing.md`
+
+
+AstrBot offers a simple KV storage interface for plugins—ideal for saving configurations, lightweight states, or user data.Consider using it where appropriate.
+Call these directly inside your plugin class (inheriting from `Star`):
+
+* `await self.put_kv_data(key: str, value: Any)`: Store data
+* `await self.get_kv_data(key: str, default: Any = None) -> Any`: Get data
+* `await self.delete_kv_data(key: str)`: Delete data
