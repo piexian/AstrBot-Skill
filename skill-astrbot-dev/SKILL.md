@@ -38,19 +38,19 @@ Use this skill when you ask for help with:
 ## Mandatory workflow (use this every time)
 
 1. Start from a single entrypoint (avoid broad loading):
-   - Site index: `skill-astrbot-dev/index.md`
-   - Core concepts: `skill-astrbot-dev/design_standards/core_concepts.md`
+   - Workflow overview: `plugin-development-workflow.md`
+   - Core concepts: `design_standards/core_concepts.md`
 2. Pick one topic folder and stay focused:
-   - Agent system: `skill-astrbot-dev/agent/`
-   - Plugin config: `skill-astrbot-dev/plugin_config/`
-   - Messages: `skill-astrbot-dev/messages/`
-   - Platform adapters: `skill-astrbot-dev/platform_adapters/`
-3. For Agent Runner (v4.7.0+): `skill-astrbot-dev/agent/agent-runner.md`
-4. For context management (conversation, history, compression): `skill-astrbot-dev/agent/context-management.md`
-5. If the user targets a specific AstrBot version, cross-check:
-   - `skill-astrbot-dev/snapshots/<version>/`
+   - Agent system: `agent/` (start with `agent/index.md`)
+   - Plugin config: `plugin_config/`
+   - Messages: `messages/`
+   - Platform adapters: `platform_adapters/`
+3. For Agent Runner (v4.7.0+): `agent/agent-runner.md`
+4. For context management (conversation, history, compression): `agent/context-management.md`
+5. If the user targets a specific AstrBot version, cross-check the repo tag:
+   - `git -C <astrbot-repo> describe --tags` (e.g. `v4.24.1`)
 6. If docs and code disagree, treat code as truth:
-   - Core code lives under `astrbotcore/astrbot/core/` (read only the needed files)
+   - Repo code lives under `<astrbot-repo>/astrbot/core/` (read only the needed files)
 
 ## STRONGLY ADVISED: use AstrBot SDK while writing plugins
 
@@ -108,10 +108,10 @@ astrbot_version: ">=4.16,<5" #声明插件要求的 AstrBot 版本范围。
 
 There are two different "hook" layers you must not mix up:
 
-- Plugin event hooks (decorators): `skill-astrbot-dev/plugin_config/hooks.md`
-- Agent runner hooks (`BaseAgentRunHooks`): `skill-astrbot-dev/agent/agent-related-hooks.md`
+- Plugin event hooks (decorators): `agent/agent-related-hooks.md` + `design_standards/event_flow.md`
+- Agent runner hooks (`BaseAgentRunHooks`): `agent/agent-related-hooks.md`
 
-If you need a complete hook inventory (because context may be truncated), generate it locally:
+If you need a complete hook inventory (because context may be truncated), generate it from the AstrBot repo (run from this repo root):
 
 ```powershell
 python scripts/generate_hook_inventory.py
@@ -120,19 +120,48 @@ python scripts/generate_hook_inventory.py
 This writes to `skill-astrbot-dev/.tmp/hook_inventory/` (gitignored). Use it as a scratchpad for writing/updating docs;
 do not reference `.tmp` paths as public documentation URLs.
 
+## Pipeline execution order (critical for debugging)
+
+The message pipeline stages run in this exact order (AstrBot source: `astrbot/core/pipeline/stage_order.py`):
+
+```
+WakingCheckStage → WhitelistCheckStage → SessionStatusCheckStage → RateLimitStage
+→ ContentSafetyCheckStage → PreProcessStage → ProcessStage → ResultDecorateStage → RespondStage
+```
+
+Key timing facts (verified against v4.24.1 source):
+
+- `on_llm_request` fires inside ProcessStage, BEFORE the agent runner calls the provider.
+  - Plugins inject prompt content here via `request.extra_user_content_parts`.
+- The agent runner (`tool_loop_agent_runner`) runs the tool loop; LLM errors here cause
+  provider fallback (`Switched from ... to fallback chat provider`).
+- `on_llm_response` fires right after the LLM returns, BEFORE `ResultDecorateStage`.
+  - **Pitfall: other plugins (TTS, image summary, etc.) may REPLACE the result chain here.**
+  - If you need the LLM text, capture it in `on_llm_response` from `response.completion_text`
+    (or from `event.get_result().chain`), NOT later in `on_decorating_result`.
+- `on_decorating_result` fires in `ResultDecorateStage`, immediately before `RespondStage`.
+  - By this point `result.get_plain_text()` may be EMPTY if an earlier `on_llm_response`
+    plugin replaced the chain with non-Plain components (Record/Image/Video).
+  - Hooks run in registration priority order; a handler can clear the result or
+    `event.stop_event()` to terminate propagation.
+- `after_message_sent` fires after the message is actually sent (last stage).
+- Streaming output (`STREAMING_RESULT`) skips `ResultDecorateStage` entirely — hooks
+  depending on decorated results may not work with streaming.
+
 ## High-signal code entrypoints (open only when needed)
 
-- Event hooks registration + signatures: `astrbotcore/astrbot/core/star/register/star_handler.py`
-- Event types: `astrbotcore/astrbot/core/star/star_handler.py`
-- Agent runners + hook call order: `astrbotcore/astrbot/core/agent/runners/`
-- Agent hook interface: `astrbotcore/astrbot/core/agent/hooks.py`
-- Main agent build (sandbox/cron/tools): `astrbotcore/astrbot/core/astr_main_agent.py`
-- Skills system (AstrBot runtime skills): `astrbotcore/astrbot/core/skills/skill_manager.py`
-- Subagents config loading: `astrbotcore/astrbot/core/subagent_orchestrator.py`
+- Event hooks registration + signatures: `<astrbot-repo>/astrbot/core/star/register/star_handler.py`
+- Event types: `<astrbot-repo>/astrbot/core/star/star_handler.py`
+- Agent runners + hook call order: `<astrbot-repo>/astrbot/core/agent/runners/`
+- Agent hook interface: `<astrbot-repo>/astrbot/core/agent/hooks.py`
+- Main agent build (sandbox/cron/tools): `<astrbot-repo>/astrbot/core/astr_main_agent.py`
+- Skills system (AstrBot runtime skills): `<astrbot-repo>/astrbot/core/skills/skill_manager.py`
+- Subagents config loading: `<astrbot-repo>/astrbot/core/subagent_orchestrator.py`
+- Pipeline stages: `<astrbot-repo>/astrbot/core/pipeline/` (see `stage_order.py`)
 
 ## v4.5.7+ New Tool Definition Pattern
 
-推荐使用 dataclass 模式定义 Tool（见 `skill-astrbot-dev/design_standards/core_concepts.md` 第7节）：
+推荐使用 dataclass 模式定义 Tool（见 `design_standards/core_concepts.md` 第7节）：
 
 ```python
 from pydantic.dataclasses import dataclass
